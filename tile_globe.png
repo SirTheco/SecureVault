@@ -1,0 +1,105 @@
+# SecureVault 2.0 — Lavender Edition
+
+SecureVault is a local password vault for storing account credentials and related information. Vault data is encrypted using AES-256-GCM, with scrypt-based key derivation. Your vault stays on your computer; the application does not require an internet connection for normal use.
+
+## Run from source
+
+Install Python 3.12 or newer, then run:
+
+```bat
+python -m pip install -r requirements.txt
+python main.py
+```
+
+## Build `SecureVault.exe`
+
+Run:
+
+```bat
+build_exe.bat
+```
+
+The executable is created at `dist\SecureVault.exe`, and a copy is placed on your Desktop.
+
+## Interface and themes
+
+The interface uses a lavender background, rounded white cards, purple gradient panels and pill-shaped gradient buttons. The login and empty-vault screens include an animated scene with floating objects, mouse parallax, and an unlock animation after a successful login. An incorrect password triggers a lock shake animation.
+
+- System, light, and dark appearance modes.
+- Six color themes: Lavender, Ocean, Graphite, Rose, Emerald, and Sunset.
+- Soft animations throughout (all disabled with one switch: Settings → Appearance → Animations):
+  - Buttons, icon buttons and filter chips fade smoothly on hover and press.
+  - Account cards fade in one after another, their hover/selection state fades, and the star/copy icons fade in on hover.
+  - The sidebar selection pill glides between items and a soft glow follows the pointer.
+  - Switching between the hero, an account and Settings cross-fades the detail panel; locking, unlocking and changing themes cross-fade the whole window.
+  - Dialogs fade in and rise slightly, toasts slide in and out, the window fades in at start-up.
+  - Mouse-wheel scrolling glides, the password-strength bar fills smoothly, and the login card wobbles after a wrong password.
+  - The login/empty scene objects rise into place with a soft overshoot, then float and follow the mouse.
+- Bundled Poppins font in `assets/fonts`.
+- Account icons for common categories, with a colored initial tile as a fallback.
+- The floating icons around the lock retain the blue artwork used in the light Graphite theme, regardless of the active palette.
+- In the account editor, use **Icon color** to select a per-account color and preview it immediately. Save changes to keep it; Reset returns the icon to its automatic color. This setting is separate from Title color and works for both category icons and initials.
+- Pre-generated visual assets in `assets/sprites`. To regenerate them, run `python tools/gen_assets.py` (requires Pillow).
+
+### How the animations work
+
+`vault/ui/anim.py` contains one shared 60 fps ticker with easing curves, an image `Fader` (used by buttons, chips and cards) and `crossfade()`, which captures the old and new picture of a region and blends them. Cross-fades need to read the screen through Pillow's `ImageGrab`; if that is unavailable, or the window is minimized, the change is simply applied instantly.
+
+## Features
+
+- Create, edit, and delete accounts; tags; custom fields; and encrypted file attachments.
+- Favorites, tag filters, search, and sorting by newest or name.
+- Security check for weak, reused, and old passwords (older than one year).
+- Password generator and password-strength indicator.
+- Copy passwords with automatic clipboard clearing.
+- Automatic and manual backups, plus backup restoration.
+- Recovery key for account recovery if the master password is forgotten.
+- Single-instance behavior: reopening the app brings the existing window to the front.
+- System tray icon.
+
+### Keyboard shortcuts
+
+- `Ctrl+L` — Lock the vault
+- `Ctrl+N` — Create a new account
+- `Ctrl+F` — Search
+
+## Settings
+
+| Section | Options |
+|---|---|
+| Appearance | System / Light / Dark mode, six color themes, animations on/off |
+| Security | Auto-lock (1–60 minutes), lock on minimize, lock when closing to tray, clear clipboard after copying a password, change master password, regenerate recovery key |
+| Backups | Automatic backups, number of retained backups, Back up now, open backup folder, restore |
+| About | Application version and data location |
+
+Application data is stored in `%APPDATA%\SecureVault`, including `vault.db`, `settings.json`, and the `backups` directory.
+
+## Reliability and security notes
+
+- A corrupted vault item should not prevent the entire vault from opening; invalid items are skipped and reported.
+- Restore accepts valid SecureVault backup files. A timestamped safety copy of the current database is created before restoration.
+- Copied passwords are removed from the clipboard after the configured delay.
+- SQLite secure-delete support is enabled for deleted items.
+- Master-password verification runs on a separate thread to keep the interface responsive.
+- Repeated incorrect master-password attempts trigger a delay.
+- Lock-on-minimize and lock-on-close-to-tray options help prevent an unlocked vault from being left unattended.
+- Invalid or corrupted settings are handled without crashing the application.
+- The application uses its own window icon and supports high-DPI displays.
+- Unexpected errors are written to `error.log` beside the database.
+
+## Tests
+
+```bat
+python -m unittest discover -s tests -v
+```
+
+## Important security notes
+
+- The master password and recovery key are not stored for you. If you lose both, your encrypted data cannot be recovered.
+- Auto-lock does not save unsaved changes. Save before leaving the app unattended.
+- Exported attachment files are **not encrypted**.
+- Older backups must be opened with the password that was active when each backup was created.
+
+## License
+
+No license is included. Add a license file before publishing if you want to grant others explicit permission to use, modify, or redistribute this project.

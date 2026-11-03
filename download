@@ -1,0 +1,25 @@
+"""Application icon (system tray, window and .exe) - loaded from the pre-rendered 3D sprite."""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+from PIL import Image, ImageDraw
+
+
+def _asset() -> Path:
+    base = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1]))
+    return base / "assets" / "sprites" / "app_icon.png"
+
+
+def make_icon(size: int = 64) -> Image.Image:
+    try:
+        return Image.open(_asset()).convert("RGBA").resize((size, size), Image.Resampling.LANCZOS)
+    except OSError:       # sprite missing: draw a simple fallback
+        s = size
+        img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        d.rounded_rectangle((0, 0, s - 1, s - 1), radius=s // 4, fill=(123, 92, 240, 255))
+        d.arc((s * 0.30, s * 0.16, s * 0.70, s * 0.62), 180, 360, fill="white", width=max(2, s // 12))
+        d.rounded_rectangle((s * 0.24, s * 0.42, s * 0.76, s * 0.82), radius=s // 14, fill="white")
+        return img

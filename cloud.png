@@ -1,0 +1,15 @@
+# Security Policy
+
+SecureVault stores sensitive account information. Please do not publish vault databases, backups, recovery keys, master passwords, or screenshots that expose secrets in bug reports.
+
+## Reporting a vulnerability
+
+Do not open a public issue for an exploitable security vulnerability. Contact the project owner privately before sharing technical details with anyone else.
+
+Include the affected version, impact, reproduction steps, and any relevant logs with secrets removed. Do not attach real vault files.
+
+## Security limitations
+
+- Keep the master password and recovery key private and stored separately.
+- Exported attachment files may be unencrypted; review the README before exporting sensitive files.
+- A Windows executable built with `build_exe.bat` is not code-signed or malware-scanned.

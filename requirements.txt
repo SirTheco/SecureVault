@@ -1,0 +1,23 @@
+# Contributing
+
+Thanks for helping improve SecureVault.
+
+## Before submitting a change
+
+1. Open an issue for a substantial feature or behavior change.
+2. Keep changes focused and avoid committing vault databases, backups, credentials, recovery keys, or local build output.
+3. Run the automated tests:
+
+   ```bat
+   python -m unittest discover -s tests -v
+   ```
+
+4. Describe the change, how it was tested, and any known limitations in the pull request.
+
+## Security-sensitive changes
+
+Changes to encryption, key derivation, password verification, recovery, backups, or attachment handling should include focused tests. Never include real user secrets in test fixtures or issue reports.
+
+## License
+
+No license is currently included. Until the repository owner chooses a license, do not assume that public visibility grants permission to reuse or redistribute the code.

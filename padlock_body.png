@@ -1,0 +1,5 @@
+"""Creates securevault.ico (used by build_exe.bat) from the 3D app icon."""
+from vault.icon import make_icon
+
+make_icon(256).save("securevault.ico", sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
+print("securevault.ico created")
